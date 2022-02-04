@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { expect } from "chai";
+import { assert } from "chai";
+import { Contract, ContractFactory } from "ethers";
 import hre, { ethers } from "hardhat";
 
 export interface Signers {
@@ -9,27 +10,29 @@ export interface Signers {
 
 describe("LandToken", function () {
   const signers = {} as Signers;
+  let LandToken: ContractFactory;
+  let land: Contract;
 
   before(async () => {
     const account: SignerWithAddress[] = await hre.ethers.getSigners();
     signers.owner = account[0];
+
+    LandToken = await ethers.getContractFactory("LandToken");
+    land = await LandToken.deploy();
+    await land.deployed();
   });
 
-  it("Should return the new greeting once it's changed", async function () {
-    const LandToken = await ethers.getContractFactory("LandToken");
-    const land = await LandToken.deploy("100000000000000000000");
-    await land.deployed();
+  it("Should sets name and symbol", async () => {
+    assert.equal(await land.name(), "LandToken");
+    assert.equal(await land.symbol(), "LAND");
+    // expect(await land.totalSupply()).to.equal("10000");
+  });
 
-    expect(await land.greet()).to.equal("Hello, world!");
+  it("The owner should have 1 Land Token", async () => {
+    assert.equal(await land.balanceOf(signers.owner.address), "1");
+  });
 
-    const setGreetingTx = await land.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await land.greet()).to.equal("Hola, mundo!");
-
-    console.log(signers.owner.address);
-    console.log(await land.balanceOf(signers.owner.address));
+  it("First token ID should be owned by the owner", async () => {
+    assert.equal(await land.ownerOf("0"), signers.owner.address);
   });
 });
