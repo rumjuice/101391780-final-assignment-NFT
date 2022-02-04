@@ -8,7 +8,7 @@ export interface Signers {
   buyer: SignerWithAddress;
 }
 
-describe("LandToken", function () {
+describe("LandToken", () => {
   const signers = {} as Signers;
   let LandToken: ContractFactory;
   let land: Contract;

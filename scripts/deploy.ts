@@ -15,7 +15,7 @@ async function main() {
 
   // We get the contract to deploy
   const LandToken = await ethers.getContractFactory("LandToken");
-  const landToken = await LandToken.deploy("10000");
+  const landToken = await LandToken.deploy();
 
   await landToken.deployed();
 
