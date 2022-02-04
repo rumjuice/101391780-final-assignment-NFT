@@ -25,7 +25,6 @@ describe("LandToken", function () {
   it("Should sets name and symbol", async () => {
     assert.equal(await land.name(), "LandToken");
     assert.equal(await land.symbol(), "LAND");
-    // expect(await land.totalSupply()).to.equal("10000");
   });
 
   it("The owner should have 1 Land Token", async () => {
