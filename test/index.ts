@@ -1,19 +1,35 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import hre, { ethers } from "hardhat";
 
-describe("Greeter", function () {
+export interface Signers {
+  owner: SignerWithAddress;
+  buyer: SignerWithAddress;
+}
+
+describe("LandToken", function () {
+  const signers = {} as Signers;
+
+  before(async () => {
+    const account: SignerWithAddress[] = await hre.ethers.getSigners();
+    signers.owner = account[0];
+  });
+
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+    const LandToken = await ethers.getContractFactory("LandToken");
+    const land = await LandToken.deploy("100000000000000000000");
+    await land.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    expect(await land.greet()).to.equal("Hello, world!");
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+    const setGreetingTx = await land.setGreeting("Hola, mundo!");
 
     // wait until the transaction is mined
     await setGreetingTx.wait();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    expect(await land.greet()).to.equal("Hola, mundo!");
+
+    console.log(signers.owner.address);
+    console.log(await land.balanceOf(signers.owner.address));
   });
 });
